@@ -1,24 +1,13 @@
-name: Trigger Probe of Deployed App on a CRON Schedule or Manually
+name: Ping Streamlit App
+
 on:
   schedule:
-    # Runs "at minute 0 past every 48 hour" (see https://crontab.guru)... ie: every 2 days
-    - cron: '0 0 */2 * *'
-  workflow_dispatch:
-    inputs:
-      manualTrigger:
-        description: 'Trigger the workflow manually'
-        required: false
-        default: 'false'
+    - cron: "0 */2 * * *"  # Every 2 hours
+  workflow_dispatch:        # Allows manual run from GitHub UI
 
 jobs:
-  probe_deployed_app:
+  ping:
     runs-on: ubuntu-latest
-    name: A job to probe deployed app
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install Dependencies
-        run: npm install
-      - name: Probe Deployed App Action Step
-        uses: ./probe-action # Uses an action in the probe-action directory
-        id: probe
+      - name: Curl to keep Streamlit app awake
+        run: curl -s https://patient-cater.streamlit.app || echo "Ping failed"
